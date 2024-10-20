@@ -1,1 +1,74 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.cdnfonts.com/css/tt-norms-pro');
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --1: #a8a77a;   /* normal */
+  --2: #c22e28;   /* fighting */
+  --3: #a98ff3;   /* flying */
+  --4: #a33ea1;   /* poison */
+  --5: #e2bf65;   /* ground */
+  --6: #b6a136;   /* rock */
+  --7: #a6b91a;   /* bug */
+  --8: #735797;   /* ghost */
+  --9: #b7b7ce;   /* steel */
+  --10: #ee8130;  /* fire */
+  --11: #6390f0;  /* water */
+  --12: #7ac74c;  /* grass */
+  --13: #f7d02c;  /* electric */
+  --14: #f95587;  /* psychic */
+  --15: #96d9d6;  /* ice */
+  --16: #6f35fc;  /* dragon */
+  --17: #705746;  /* dark */
+  --18: #d685ad;  /* fairy */
+}
+
+.bg-1 { background: var(--1); }
+
+.bg-2 { background: var(--2); }
+
+.bg-3 { background: var(--3); }
+
+.bg-4 { background: var(--4); }
+
+.bg-5 { background: var(--5); }
+
+.bg-6 { background: var(--6); }
+
+.bg-7 { background: var(--7); }
+
+.bg-8 { background: var(--8); }
+
+.bg-9 { background: var(--9); }
+
+.bg-10 { background: var(--10); }
+
+.bg-11 { background: var(--11); }
+
+.bg-12 { background: var(--12); }
+
+.bg-13 { background: var(--13); }
+
+.bg-14 { background: var(--14); }
+
+.bg-15 { background: var(--15); }
+
+.bg-16 { background: var(--16); }
+
+.bg-17 { background: var(--17); }
+
+.bg-18 { background: var(--18); }
+
+
+.pokemon-list-item {
+  transition: transform 0.3s ease-in-out;
+  &:hover {
+    transform: scale(1.01);
+  }
+}
