@@ -72,3 +72,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     transform: scale(1.01);
   }
 }
+
+.moves-list-item {
+  min-height: 190px;
+}

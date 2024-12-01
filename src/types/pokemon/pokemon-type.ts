@@ -16,6 +16,22 @@ export type PokemonData = {
   imgUrl: string
 }
 
+export type MoveData = {
+  id: number
+  name: string
+  type: Type
+  damage: number
+  accuracy: number
+  pp: number
+  description: string
+}
+
+export type Pagination = {
+  count: number
+  nbPages: number
+}
+
+
 export type Type = {
   id: number
   name: string

@@ -27,13 +27,17 @@ import {map} from "rxjs";
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #sidenav [mode]="sidenavMode" class="sidenav" [(opened)]="opened">
     <mat-nav-list>
+      <div class="flex px-8 py-4 border-b-2 border-gray-300">
+        <img src="https://static.wikia.nocookie.net/pokemon-fano/images/6/6f/Poke_Ball.png" width="32" class="mr-4">
+        Menu
+      </div>
       <a mat-list-item href="">Liste des Pokemons</a>
       <a mat-list-item href="/moves">Liste des attaques</a>
     </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content class="sidenav-content">
-    <mat-toolbar color="primary" class="toolbar h-20">
+    <mat-toolbar color="primary" class="toolbar">
       <button mat-icon-button (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
@@ -59,7 +63,7 @@ export class AppComponent {
   constructor(private breakpointObserver: BreakpointObserver) {}
 
   ngOnInit() {
-    this.breakpointObserver.observe([Breakpoints.Handset]) // Observe si la résolution correspond à celle d'un téléphone (600px)
+    this.breakpointObserver.observe([Breakpoints.Handset])
       .pipe(
         map(result => result.matches)
       )

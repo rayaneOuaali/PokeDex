@@ -5,12 +5,12 @@ import {MatSlideToggle, MatSlideToggleChange} from "@angular/material/slide-togg
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule} from "@angular/forms";
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
-import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
 import {MatIcon} from "@angular/material/icon";
 import {MatMiniFabButton} from "@angular/material/button";
 import {PokemonListItemComponent} from "../pokemon-list-item/pokemon-list-item.component";
-import {PokemonData} from "../../types/pokemon/pokemon-type";
+import {Pagination, PokemonData} from "../../types/pokemon/pokemon-type";
+import {GetPokemonsListService} from "../get-pokemons-list.service";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-pokemon-list-page',
@@ -20,7 +20,6 @@ import {PokemonData} from "../../types/pokemon/pokemon-type";
     MatProgressSpinner,
     MatSlideToggle,
     FormsModule,
-    NgOptimizedImage,
     MatInputModule,
     NgForOf,
     NgIf,
@@ -36,7 +35,7 @@ import {PokemonData} from "../../types/pokemon/pokemon-type";
       <input matInput type="text" [(ngModel)]="text">
     </mat-form-field>
 
-    <button mat-mini-fab (click)="onSearchChange()">
+    <button mat-mini-fab (click)="onSearchChange()" class="my-auto">
       <mat-icon>search</mat-icon>
     </button>
   </div>
@@ -55,23 +54,23 @@ import {PokemonData} from "../../types/pokemon/pokemon-type";
       Formes alternatives
     </mat-slide-toggle>
     <mat-paginator
-      [length]="pokemonListData?.length"
+      [length]="pokemonListData?.pagination?.count"
       [pageSize]="pageSize"
       [pageIndex]="currentPage - 1"
       (page)="onPageChange($event)"
     />
   </div>
 
-  <div class="text-center text-xl font-semibold py-4" *ngIf="pokemonListData && !currentPokemonListDisplayed?.length">
+  <div class="text-center text-xl font-semibold py-4" *ngIf="pokemonListData && !pokemonListData?.pokemons?.length">
     <span>Aucun Pokémon trouvé</span>
   </div>
 
-  <div *ngIf="!AllPokemonListData" class="flex justify-center py-4">
+  <div *ngIf="!pokemonListData" class="flex justify-center py-4">
     <mat-spinner [diameter]="50"></mat-spinner>
   </div>
 
-  <div *ngIf="AllPokemonListData" class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-4">
-    <app-pokemon-list-item *ngFor="let pkmn of currentPokemonListDisplayed" [pokemonData]="pkmn" />
+  <div *ngIf="pokemonListData" class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-4">
+    <app-pokemon-list-item *ngFor="let pkmn of pokemonListData?.pokemons" [pokemonData]="pkmn" />
   </div>
 </div>
 `,
@@ -82,60 +81,55 @@ export class PokemonListPageComponent implements OnInit {
   isFormsDisplayed: boolean = false;
   currentPage: number = 1;
   pageSize: number = 50;
-  AllPokemonListData: PokemonData[] | null = null;
-  pokemonListData: PokemonData[] | null = null;
-  currentPokemonListDisplayed: PokemonData[] | null = null;
-
-  constructor(private http: HttpClient) {}
+  pokemonListData: { pokemons: PokemonData[], pagination: Pagination } | null = null;
+  constructor(
+    private getPokemonsListService: GetPokemonsListService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.fetchPokemonList(this.text).subscribe((data: any) => {
-      this.AllPokemonListData = data.pokemons;
-      if (this.AllPokemonListData) {
-        this.pokemonListData = this.AllPokemonListData.filter((pokemon: any) => this.isFormsDisplayed ? pokemon : pokemon.id <= 1025)
-      }
-      if (this.pokemonListData) {
-        this.currentPokemonListDisplayed = this.pokemonListData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
-      }
+    this.route.queryParams.subscribe(params => {
+      this.text = params['search'] || '';
+      this.isFormsDisplayed = params['forms'] === 'true';
+      this.currentPage = params['page'] ? +params['page'] : 1;
+
+      this.fetchRequest();
     });
   }
 
-  fetchPokemonList(text: string): Observable<any> {
-    return this.http.get(`https://api-dex-nine.vercel.app/pokemon?name=${text}&lang=fr&page=1&pageSize=1281&withForms=true`)
+  fetchRequest(): void {
+    this.getPokemonsListService
+      .getPokemonsList(this.text, this.currentPage, this.isFormsDisplayed)
+      .subscribe((data: any) => {
+        this.pokemonListData = data;
+      });
   }
 
-  onSearchChange() {
+  updateQueryParams(): void {
+    this.router.navigate([], {
+      queryParams: {
+        search: this.text || null,
+        forms: this.isFormsDisplayed ? 'true' : null,
+        page: this.currentPage !== 1 ? this.currentPage : null
+      },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onSearchChange(): void {
     this.currentPage = 1;
-    if (this.text === '') {
-      if (this.AllPokemonListData) {
-        this.pokemonListData = this.AllPokemonListData.filter((pokemon: any) => this.isFormsDisplayed ? pokemon : pokemon.id <= 1025)
-      }
-    } else {
-      if (this.AllPokemonListData) {
-        this.pokemonListData = this.AllPokemonListData.filter((pokemon: any) => this.isFormsDisplayed ? pokemon : pokemon.id <= 1025)
-          .filter((pokemon: any) => pokemon.name.toLowerCase().includes(this.text.toLowerCase()))
-      }
-    }
-    if (this.pokemonListData) {
-      this.currentPokemonListDisplayed = this.pokemonListData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
-    }
+    this.updateQueryParams();
   }
 
-  onPageChange(event: PageEvent) {
+  onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex + 1;
-    if (this.pokemonListData) {
-      this.currentPokemonListDisplayed = this.pokemonListData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
-    }
+    this.updateQueryParams();
   }
 
-  onToggleChange(event: MatSlideToggleChange) {
-    this.text = ''
+  onToggleChange(event: MatSlideToggleChange): void {
+    this.text = '';
     this.currentPage = 1;
-    if (this.AllPokemonListData) {
-      this.pokemonListData = this.AllPokemonListData.filter((pokemon: any) => this.isFormsDisplayed ? pokemon : pokemon.id <= 1025)
-    }
-    if (this.pokemonListData) {
-      this.currentPokemonListDisplayed = this.pokemonListData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
-    }
+    this.updateQueryParams();
   }
 }
