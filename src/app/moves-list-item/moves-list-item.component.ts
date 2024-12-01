@@ -39,7 +39,6 @@ import {PokemonDialogComponent} from "../pokemon-dialog-component/pokemon-dialog
       <div class="text-gray-600 text-sm">
         <p>{{ moveData.description }}</p>
       </div>
-
       <button mat-raised-button color="primary" class="mt-4" (click)="openDialog()">Voir les Pokémon</button>
     </div>
   `,
