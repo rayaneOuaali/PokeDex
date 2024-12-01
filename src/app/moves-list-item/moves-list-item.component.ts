@@ -43,7 +43,6 @@ import {PokemonDialogComponent} from "../pokemon-dialog-component/pokemon-dialog
       <button mat-raised-button color="primary" class="mt-4" (click)="openDialog()">Voir les Pokémon</button>
     </div>
   `,
-  styleUrl: './moves-list-item.component.css'
 })
 export class MovesListItemComponent {
   @Input() moveData: MoveData;

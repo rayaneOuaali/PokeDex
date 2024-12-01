@@ -1,6 +1,18 @@
 # PokeDex
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.4.
+Ce projet est un Pokedex qui a pour but d'afficher les informations suivantes :
+
+- Tout les pokémons et leurs statitiques
+- Toutes les attaques et leurs statistiques
+- Tout les Pokémons qui apprennent une attaque spécifique
+
+Deux pages sont présentes :
+
+- Liste des Pokémons
+- Liste des attaques
+
+Chaque page permet de rechercher un pokemon ou une attaque par nom.
+La page Liste des Pokémons contient un bouton toggle qui permet d'activer/désactiver l'affichage des formes alternatives des Pokémons
 
 ## Development server
 

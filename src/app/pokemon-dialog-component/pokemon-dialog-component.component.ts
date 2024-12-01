@@ -13,7 +13,7 @@ import {NgForOf, NgIf} from "@angular/common";
 @Component({
   selector: 'app-pokemon-dialog',
   template: `
-    <h2 mat-dialog-title class="text-center">Pokémon apprenant "{{ move }}"</h2>
+    <h2 mat-dialog-title class="text-center">Pokémons apprenant {{ move }}</h2>
     <mat-dialog-content>
       <ng-container *ngIf="categories.length; else noData">
         <div *ngFor="let category of categories" class="category">
